@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>QualityForge — Client Registration</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+/* ── RESET & ROOT ── */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --teal:#1a9e73;
+  --teal-light:#22c98f;
+  --teal-dim:rgba(26,158,115,0.09);
+  --teal-border:rgba(26,158,115,0.28);
+  --teal-dark:#0d6b4a;
+  --amber:#f0a500;
+  --red:#e05252;
+  --bg:#f5f7f6;
+  --bg2:#ffffff;
+  --bg3:#eef2f0;
+  --text:#0d1c16;
+  --text2:#476058;
+  --text3:#90a89f;
+  --border:rgba(0,0,0,0.07);
+  --border2:rgba(0,0,0,0.13);
+  --radius:14px;
+  --radius-sm:9px;
+  --shadow:0 2px 16px rgba(0,0,0,0.06);
+  --shadow-lg:0 8px 40px rgba(0,0,0,0.1);
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  font-size:15px;
+  line-height:1.6;
+  min-height:100vh;
+}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:var(--teal);border-radius:2px}
+
+/* ── TOP BAR ── */
+.topbar{
+  position:sticky;top:0;z-index:100;
+  height:60px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 40px;
+  background:rgba(245,247,246,0.94);
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(12px);
+}
+.topbar-logo{
+  display:flex;align-items:center;gap:10px;
+  font-family:'Syne',sans-serif;font-size:16px;font-weight:700;
+  color:var(--text);letter-spacing:-0.02em;
+}
+.logo-icon{
+  width:30px;height:30px;background:var(--teal);border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.logo-icon svg{width:15px;height:15px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.topbar-badge{
+  font-size:11px;font-family:'DM Mono',monospace;letter-spacing:0.08em;
+  background:var(--teal-dim);color:var(--teal);
+  border:1px solid var(--teal-border);border-radius:20px;
+  padding:3px 12px;
+}
+
+/* ── PROGRESS STRIP ── */
+.progress-strip{
+  display:flex;align-items:stretch;
+  background:var(--bg2);
+  border-bottom:1px solid var(--border);
+}
+.prog-step{
+  flex:1;display:flex;align-items:center;gap:12px;
+  padding:16px 32px;
+  border-right:1px solid var(--border);
+  cursor:pointer;transition:background 0.18s;
+  position:relative;
+}
+.prog-step:last-child{border-right:none}
+.prog-step.active{background:var(--teal-dim)}
+.prog-step.done{background:#f0faf6}
+.prog-step.locked{opacity:0.45;cursor:not-allowed}
+.prog-num{
+  width:32px;height:32px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:500;flex-shrink:0;
+  border:1.5px solid var(--border2);
+  background:var(--bg);color:var(--text2);
+  transition:all 0.2s;font-family:'DM Mono',monospace;
+}
+.prog-step.active .prog-num{background:var(--teal);color:#fff;border-color:var(--teal)}
+.prog-step.done .prog-num{background:#e8f8f2;color:var(--teal);border-color:var(--teal-border)}
+.prog-info{}
+.prog-label{font-size:11px;font-family:'DM Mono',monospace;letter-spacing:0.07em;text-transform:uppercase;color:var(--text3);margin-bottom:1px}
+.prog-step.active .prog-label{color:var(--teal)}
+.prog-title{font-size:13px;font-weight:500;color:var(--text)}
+.prog-tick{
+  margin-left:auto;font-size:16px;color:var(--teal);
+  display:none;
+}
+.prog-step.done .prog-tick{display:block}
+
+/* ── MAIN LAYOUT ── */
+.main{
+  max-width:960px;margin:0 auto;
+  padding:48px 24px 80px;
+}
+
+/* ── FORM PANELS ── */
+.form-panel{display:none}
+.form-panel.active{display:block;animation:fadeUp 0.3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+.panel-header{margin-bottom:36px}
+.panel-eyebrow{
+  font-size:11px;font-family:'DM Mono',monospace;letter-spacing:0.1em;
+  text-transform:uppercase;color:var(--teal);margin-bottom:8px;
+  display:flex;align-items:center;gap:7px;
+}
+.eyebrow-dot{width:5px;height:5px;border-radius:50%;background:var(--teal)}
+.panel-title{
+  font-family:'Syne',sans-serif;font-size:30px;font-weight:700;
+  letter-spacing:-0.02em;color:var(--text);margin-bottom:6px;
+}
+.panel-sub{font-size:14px;color:var(--text2);line-height:1.6;max-width:520px}
+
+/* ── FORM CARD ── */
+.form-card{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  overflow:hidden;
+  box-shadow:var(--shadow);
+}
+.form-section{
+  padding:28px 32px;
+  border-bottom:1px solid var(--border);
+}
+.form-section:last-of-type{border-bottom:none}
+.section-heading{
+  font-size:11px;font-family:'DM Mono',monospace;letter-spacing:0.09em;
+  text-transform:uppercase;color:var(--text3);
+  margin-bottom:20px;display:flex;align-items:center;gap:8px;
+}
+.section-heading::after{
+  content:'';flex:1;height:1px;background:var(--border);
+}
+
+/* ── FORM FIELDS ── */
+.field-group{margin-bottom:20px}
+.field-group:last-child{margin-bottom:0}
+.field-row-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.field-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+label{
+  display:block;
+  font-size:11px;font-family:'DM Mono',monospace;
+  letter-spacing:0.08em;text-transform:uppercase;
+  color:var(--text2);margin-bottom:7px;
+}
+label .req{color:var(--red);margin-left:2px}
+label .opt{color:var(--text3);font-size:10px;margin-left:4px;text-transform:none;letter-spacing:0}
+
+input[type=text],
+input[type=email],
+input[type=tel],
+select,
+textarea{
+  width:100%;
+  padding:11px 14px;
+  background:#fff;
+  border:1px solid var(--border2);
+  border-radius:var(--radius-sm);
+  font-family:'DM Sans',sans-serif;
+  font-size:14px;color:var(--text);
+  outline:none;
+  transition:border-color 0.18s, box-shadow 0.18s;
+  -webkit-appearance:none;appearance:none;
+}
+input:focus,select:focus,textarea:focus{
+  border-color:var(--teal);
+  box-shadow:0 0 0 3px var(--teal-dim);
+}
+input::placeholder,textarea::placeholder{color:var(--text3);font-size:13px}
+select{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2390a89f' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 14px center;
+  padding-right:36px;cursor:pointer;
+}
+textarea{resize:vertical;min-height:100px;line-height:1.6}
+
+/* field hint */
+.field-hint{font-size:11px;color:var(--text3);margin-top:5px;line-height:1.5}
+
+/* field error */
+.field-error{
+  font-size:11px;color:var(--red);margin-top:5px;
+  display:none;
+}
+input.invalid,select.invalid,textarea.invalid{border-color:var(--red)!important;box-shadow:0 0 0 3px rgba(224,82,82,0.1)!important}
+
+/* pre-fill chip */
+.prefill-chip{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:11px;font-family:'DM Mono',monospace;
+  background:var(--teal-dim);color:var(--teal);
+  border:1px solid var(--teal-border);border-radius:5px;
+  padding:2px 8px;margin-bottom:6px;
+}
+
+/* ── FORM FOOTER ── */
+.form-footer{
+  padding:20px 32px;
+  background:var(--bg3);
+  border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:12px;
+}
+.footer-note{font-size:12px;color:var(--text3);line-height:1.5}
+.footer-note strong{color:var(--text2)}
+.btn-next{
+  font-family:'Syne',sans-serif;font-size:14px;font-weight:600;
+  padding:12px 32px;border-radius:var(--radius-sm);
+  background:var(--teal);color:#fff;border:none;cursor:pointer;
+  transition:all 0.2s;letter-spacing:0.01em;
+  display:flex;align-items:center;gap:8px;
+}
+.btn-next:hover{background:var(--teal-light);transform:translateY(-1px);box-shadow:0 6px 20px rgba(26,158,115,0.28)}
+.btn-next:disabled{background:var(--text3);cursor:not-allowed;transform:none;box-shadow:none}
+.btn-back{
+  font-family:'DM Sans',sans-serif;font-size:13px;
+  padding:11px 20px;border-radius:var(--radius-sm);
+  background:none;color:var(--text2);
+  border:1px solid var(--border2);cursor:pointer;
+  transition:all 0.18s;
+}
+.btn-back:hover{border-color:var(--teal);color:var(--teal)}
+
+/* ── SUCCESS SCREEN ── */
+.success-screen{
+  display:none;text-align:center;
+  padding:80px 32px;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  animation:fadeUp 0.4s ease;
+}
+.success-icon{
+  width:72px;height:72px;border-radius:50%;
+  background:var(--teal-dim);border:2px solid var(--teal-border);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 24px;font-size:28px;
+}
+.success-title{
+  font-family:'Syne',sans-serif;font-size:26px;font-weight:700;
+  color:var(--text);margin-bottom:10px;letter-spacing:-0.02em;
+}
+.success-sub{font-size:14px;color:var(--text2);line-height:1.7;max-width:440px;margin:0 auto 32px}
+.success-data{
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:20px 24px;
+  text-align:left;max-width:500px;margin:0 auto 28px;
+}
+.success-data-title{font-size:11px;font-family:'DM Mono',monospace;letter-spacing:0.08em;text-transform:uppercase;color:var(--text3);margin-bottom:12px}
+.data-row{display:flex;gap:12px;padding:7px 0;border-bottom:1px solid var(--border);font-size:13px}
+.data-row:last-child{border-bottom:none}
+.data-key{color:var(--text3);min-width:140px;font-family:'DM Mono',monospace;font-size:11px;padding-top:2px}
+.data-val{color:var(--text);font-weight:500;flex:1;word-break:break-word}
+.btn-restart{
+  font-family:'Syne',sans-serif;font-size:13px;font-weight:600;
+  padding:10px 24px;border-radius:var(--radius-sm);
+  background:none;color:var(--teal);
+  border:1px solid var(--teal-border);cursor:pointer;
+  transition:all 0.18s;
+}
+.btn-restart:hover{background:var(--teal-dim)}
+
+/* ── DATA PREVIEW PANEL ── */
+.data-preview{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--radius);box-shadow:var(--shadow);
+  margin-top:20px;overflow:hidden;
+}
+.data-preview-header{
+  padding:12px 20px;background:var(--bg3);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.data-preview-header span{font-size:11px;font-family:'DM Mono',monospace;letter-spacing:0.07em;color:var(--text2)}
+.data-preview-body{padding:16px 20px;font-size:12px;font-family:'DM Mono',monospace;color:var(--text2);line-height:1.8;white-space:pre-wrap;max-height:200px;overflow-y:auto}
+
+/* ── RESPONSIVE ── */
+@media(max-width:680px){
+  .topbar{padding:0 20px}
+  .progress-strip{flex-direction:column}
+  .prog-step{border-right:none;border-bottom:1px solid var(--border);padding:12px 20px}
+  .main{padding:28px 16px 60px}
+  .form-section{padding:20px}
+  .field-row-2,.field-row-3{grid-template-columns:1fr}
+  .form-footer{flex-direction:column-reverse;align-items:stretch}
+  .btn-next,.btn-back{width:100%;justify-content:center;text-align:center}
+  .panel-title{font-size:24px}
+}
+</style>
+</head>
+<body>
+
+<!-- ── TOP BAR ── -->
+<div class="topbar">
+  <div class="topbar-logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+    </div>
+    QualityForge
+  </div>
+  <div class="topbar-badge">Client Registration</div>
+</div>
+
+<!-- ── PROGRESS STRIP ── -->
+<div class="progress-strip">
+  <div class="prog-step active" id="prog-1">
+    <div class="prog-num">1</div>
+    <div class="prog-info">
+      <div class="prog-label">Step 1 of 2</div>
+      <div class="prog-title">Your profile</div>
+    </div>
+    <div class="prog-tick">✓</div>
+  </div>
+  <div class="prog-step locked" id="prog-2">
+    <div class="prog-num">2</div>
+    <div class="prog-info">
+      <div class="prog-label">Step 2 of 2</div>
+      <div class="prog-title">Product registration</div>
+    </div>
+    <div class="prog-tick">✓</div>
+  </div>
+</div>
+
+<!-- ── MAIN ── -->
+<div class="main">
+
+  <!-- ════ FORM 1 — USER PROFILE ════ -->
+  <div class="form-panel active" id="panel-1">
+
+    <div class="panel-header">
+      <div class="panel-eyebrow"><span class="eyebrow-dot"></span>Step 1 — User profile</div>
+      <h1 class="panel-title">Tell us about yourself</h1>
+      <p class="panel-sub">Create your QualityForge client profile. This helps us understand who you are and configure the right QA setup for your team.</p>
+    </div>
+
+    <div class="form-card">
+
+      <!-- Personal details -->
+      <div class="form-section">
+        <div class="section-heading">Personal details</div>
+
+        <div class="field-row-2">
+          <div class="field-group">
+            <label for="u-firstname">First name <span class="req">*</span></label>
+            <input type="text" id="u-firstname" placeholder="e.g. Aishwarya"/>
+            <div class="field-error" id="err-firstname">Please enter your first name</div>
+          </div>
+          <div class="field-group">
+            <label for="u-lastname">Last name <span class="req">*</span></label>
+            <input type="text" id="u-lastname" placeholder="e.g. Sharma"/>
+            <div class="field-error" id="err-lastname">Please enter your last name</div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label for="u-email">Business email <span class="req">*</span></label>
+          <input type="email" id="u-email" placeholder="you@company.com"/>
+          <div class="field-hint">Use your work email — personal emails like Gmail may not be accepted</div>
+          <div class="field-error" id="err-email">Please enter a valid business email address</div>
+        </div>
+
+        <div class="field-group">
+          <label for="u-role">Your role / job title <span class="req">*</span></label>
+          <input type="text" id="u-role" placeholder="e.g. QA Lead, Software Engineer, CTO, Product Manager"/>
+          <div class="field-error" id="err-role">Please enter your role</div>
+        </div>
+      </div>
+
+      <!-- Organisation details -->
+      <div class="form-section">
+        <div class="section-heading">Organisation details</div>
+
+        <div class="field-group">
+          <label for="u-org">Organisation name <span class="req">*</span></label>
+          <input type="text" id="u-org" placeholder="e.g. Amazon India Pvt. Ltd., Acme Technologies"/>
+          <div class="field-error" id="err-org">Please enter your organisation name</div>
+        </div>
+
+        <div class="field-row-2">
+          <div class="field-group">
+            <label for="u-type">Client type <span class="req">*</span></label>
+            <select id="u-type">
+              <option value="">Select your organisation type</option>
+              <option value="enterprise">Enterprise — large organisation</option>
+              <option value="startup">Startup — early stage company</option>
+              <option value="smb">SMB — small or medium business</option>
+              <option value="individual">Individual developer</option>
+            </select>
+            <div class="field-hint">This determines which QA plan suits you</div>
+            <div class="field-error" id="err-type">Please select your client type</div>
+          </div>
+          <div class="field-group">
+            <label for="u-team">Team size <span class="req">*</span></label>
+            <select id="u-team">
+              <option value="">Select team size</option>
+              <option value="1">Just me</option>
+              <option value="2-10">2 – 10 people</option>
+              <option value="11-50">11 – 50 people</option>
+              <option value="51-200">51 – 200 people</option>
+              <option value="200+">200+ people</option>
+            </select>
+            <div class="field-error" id="err-team">Please select your team size</div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label for="u-stack">Technology stack <span class="req">*</span></label>
+          <input type="text" id="u-stack" placeholder="e.g. AWS, Python, JIRA, n8n, Alexa SDK, Node.js"/>
+          <div class="field-hint">List the main tools, languages, and platforms your team uses — separated by commas</div>
+          <div class="field-error" id="err-stack">Please describe your technology stack</div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="form-footer">
+        <div class="footer-note">
+          <strong>All fields marked * are required.</strong><br/>
+          Your data is only used to configure your QA setup.
+        </div>
+        <button class="btn-next" onclick="submitForm1()">
+          Continue to product registration →
+        </button>
+      </div>
+
+    </div>
+  </div><!-- /panel-1 -->
+
+
+  <!-- ════ FORM 2 — PRODUCT REGISTRATION ════ -->
+  <div class="form-panel" id="panel-2">
+
+    <div class="panel-header">
+      <div class="panel-eyebrow"><span class="eyebrow-dot"></span>Step 2 — Product registration</div>
+      <h1 class="panel-title">Register your product</h1>
+      <p class="panel-sub">Describe the product you need QA testing for. The more detail you provide, the more accurate and relevant your AI-generated test cases will be.</p>
+    </div>
+
+    <div class="form-card">
+
+      <!-- Basic product info -->
+      <div class="form-section">
+        <div class="section-heading">Basic product information</div>
+
+        <div class="field-group">
+          <div class="prefill-chip">⚡ Pre-filled for Echo Dot</div>
+          <label for="p-name">Product name <span class="req">*</span></label>
+          <input type="text" id="p-name" value="Amazon Echo Dot (5th Generation)"/>
+          <div class="field-hint">Edit if your product name is different</div>
+          <div class="field-error" id="err-pname">Please enter the product name</div>
+        </div>
+
+        <div class="field-row-2">
+          <div class="field-group">
+            <div class="prefill-chip">⚡ Pre-filled</div>
+            <label for="p-type">Product type <span class="req">*</span></label>
+            <select id="p-type">
+              <option value="">Select type</option>
+              <option value="smart-speaker" selected>Smart Speaker</option>
+              <option value="mobile-app">Mobile Application</option>
+              <option value="web-app">Web Application</option>
+              <option value="iot-device">IoT / Connected Device</option>
+              <option value="api-service">API / Backend Service</option>
+              <option value="wearable">Wearable Device</option>
+              <option value="other">Other</option>
+            </select>
+            <div class="field-error" id="err-ptype">Please select product type</div>
+          </div>
+          <div class="field-group">
+            <label for="p-version">Product version / generation <span class="req">*</span></label>
+            <input type="text" id="p-version" placeholder="e.g. 5th Gen, v2.1, 2023 model" value="5th Generation (2023)"/>
+            <div class="field-error" id="err-pversion">Please enter the product version</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- How it works -->
+      <div class="form-section">
+        <div class="section-heading">How the product works</div>
+
+        <div class="field-row-3">
+          <div class="field-group">
+            <div class="prefill-chip">⚡ Pre-filled</div>
+            <label for="p-input">Input method <span class="req">*</span></label>
+            <select id="p-input">
+              <option value="">Select</option>
+              <option value="voice" selected>Voice</option>
+              <option value="touch">Touch / Tap</option>
+              <option value="keyboard">Keyboard</option>
+              <option value="api">API call</option>
+              <option value="sensor">Sensor / Automatic</option>
+              <option value="multiple">Multiple inputs</option>
+            </select>
+            <div class="field-error" id="err-pinput">Please select input method</div>
+          </div>
+          <div class="field-group">
+            <div class="prefill-chip">⚡ Pre-filled</div>
+            <label for="p-output">Output method <span class="req">*</span></label>
+            <select id="p-output">
+              <option value="">Select</option>
+              <option value="audio" selected>Audio</option>
+              <option value="visual">Visual / Screen</option>
+              <option value="notification">Push notification</option>
+              <option value="api-response">API response</option>
+              <option value="physical">Physical action</option>
+              <option value="multiple">Multiple outputs</option>
+            </select>
+            <div class="field-error" id="err-poutput">Please select output method</div>
+          </div>
+          <div class="field-group">
+            <label for="p-connectivity">Connectivity <span class="req">*</span></label>
+            <input type="text" id="p-connectivity" placeholder="e.g. WiFi, Bluetooth 5.0" value="WiFi 802.11ac, Bluetooth 5.0"/>
+            <div class="field-error" id="err-pconnect">Please enter connectivity details</div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label for="p-compat">Compatible platforms / ecosystems <span class="req">*</span></label>
+          <input type="text" id="p-compat" placeholder="e.g. Alexa, Zigbee, iOS, Android, AWS, Smart home" value="Alexa, Zigbee hub, iOS, Android, AWS IoT"/>
+          <div class="field-hint">What other systems, apps, or platforms does this product work with?</div>
+          <div class="field-error" id="err-pcompat">Please list compatible platforms</div>
+        </div>
+      </div>
+
+      <!-- Pricing & subscription -->
+      <div class="form-section">
+        <div class="section-heading">Pricing &amp; subscription</div>
+
+        <div class="field-row-2">
+          <div class="field-group">
+            <label for="p-price">Base price <span class="req">*</span></label>
+            <input type="text" id="p-price" placeholder="e.g. ₹4,499 or $54.99" value="₹4,499 / $54.99 (one-time)"/>
+            <div class="field-error" id="err-pprice">Please enter the product price</div>
+          </div>
+          <div class="field-group">
+            <label for="p-sub">Subscription model <span class="req">*</span></label>
+            <select id="p-sub">
+              <option value="">Select</option>
+              <option value="none">No subscription required</option>
+              <option value="optional" selected>Optional subscription available</option>
+              <option value="required">Subscription required to use</option>
+            </select>
+            <div class="field-error" id="err-psub">Please select subscription model</div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label for="p-sub-detail">Subscription details <span class="opt">(if applicable)</span></label>
+          <input type="text" id="p-sub-detail" placeholder="e.g. Amazon Music ₹999/month · Prime ₹1,499/month" value="Amazon Music ₹999/month · Amazon Prime ₹1,499/month (optional, enhances features)"/>
+          <div class="field-hint">List any subscription plans the user can add on, with their prices</div>
+        </div>
+      </div>
+
+      <!-- Features -->
+      <div class="form-section">
+        <div class="section-heading">Features &amp; testing context</div>
+
+        <div class="field-group">
+          <label for="p-features">Key features <span class="req">*</span></label>
+          <textarea id="p-features" rows="6" placeholder="List the main features, one per line. e.g.&#10;Voice calls via Alexa&#10;Smart home control (Zigbee hub built-in)&#10;Music and podcast streaming&#10;Alarm and reminder setting&#10;Temperature sensor (5th gen)&#10;Drop-in and announcement calls">Voice calls and messaging via Alexa
+Smart home control (Zigbee hub built-in)
+Music and podcast streaming
+Alarm, timer and reminder setting
+Temperature sensor with ambient display
+Drop-in and announcement calls
+Multi-room audio sync
+Routines and automation</textarea>
+          <div class="field-hint">This is the most important field — the AI uses this to write test cases for each feature</div>
+          <div class="field-error" id="err-pfeatures">Please list at least one key feature</div>
+        </div>
+
+        <div class="field-group">
+          <label for="p-maintenance">Warranty &amp; maintenance <span class="req">*</span></label>
+          <input type="text" id="p-maintenance" placeholder="e.g. 1-year warranty, OTA updates, no physical maintenance" value="1-year limited warranty · Software updates via OTA · No physical maintenance required"/>
+          <div class="field-error" id="err-pmaint">Please enter maintenance details</div>
+        </div>
+
+        <div class="field-group">
+          <label for="p-edge">Known issues or edge cases <span class="opt">(optional but recommended)</span></label>
+          <textarea id="p-edge" rows="3" placeholder="Describe any known failure areas, tricky scenarios, or edge cases you've noticed. e.g.&#10;Voice recognition struggles in noisy environments&#10;Drops WiFi when switching between networks&#10;Mishears commands with strong accents"></textarea>
+          <div class="field-hint">This helps the AI generate more targeted and useful edge case test scenarios</div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="form-footer">
+        <button class="btn-back" onclick="goBack()">← Back to profile</button>
+        <div class="footer-note" style="text-align:center">
+          <strong>All fields marked * are required.</strong><br/>
+          Submitting sends your data to the QualityForge backend team.
+        </div>
+        <button class="btn-next" onclick="submitForm2()">
+          Submit registration →
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Live data preview -->
+    <div class="data-preview" id="data-preview" style="display:none">
+      <div class="data-preview-header">
+        <span>📦 Data package — what gets sent to the backend</span>
+        <span style="color:var(--teal)">JSON format</span>
+      </div>
+      <div class="data-preview-body" id="data-preview-body"></div>
+    </div>
+
+  </div><!-- /panel-2 -->
+
+
+  <!-- ════ SUCCESS SCREEN ════ -->
+  <div class="success-screen" id="success-screen">
+    <div class="success-icon">✓</div>
+    <div class="success-title">Registration complete!</div>
+    <p class="success-sub">Your profile and product details have been received. The QualityForge team will review your submission and reach out within 2 business days with next steps.</p>
+
+    <div class="success-data">
+      <div class="success-data-title">What was submitted</div>
+      <div id="summary-rows"></div>
+    </div>
+
+    <button class="btn-restart" onclick="restart()">Register another product →</button>
+  </div>
+
+</div><!-- /main -->
+
+<script>
+// ─────────────────────────────────────────
+// DATA STORE — holds both forms' data
+// ─────────────────────────────────────────
+const formData = {};
+
+// ─────────────────────────────────────────
+// HELPERS
+// ─────────────────────────────────────────
+function val(id){ return document.getElementById(id).value.trim(); }
+
+function setError(fieldId, errId, show){
+  const field = document.getElementById(fieldId);
+  const err   = document.getElementById(errId);
+  if(show){
+    field.classList.add('invalid');
+    err.style.display = 'block';
+  } else {
+    field.classList.remove('invalid');
+    err.style.display = 'none';
+  }
+  return !show; // returns true if valid
+}
+
+// Clear errors when user starts typing
+document.querySelectorAll('input, select, textarea').forEach(el => {
+  el.addEventListener('input', () => {
+    el.classList.remove('invalid');
+    const nextSibling = el.nextElementSibling;
+    if(nextSibling && nextSibling.classList.contains('field-error')){
+      nextSibling.style.display = 'none';
+    }
+  });
+});
+
+// ─────────────────────────────────────────
+// FORM 1 — VALIDATE & SUBMIT
+// ─────────────────────────────────────────
+function submitForm1(){
+  let valid = true;
+
+  valid &= setError('u-firstname', 'err-firstname', !val('u-firstname'));
+  valid &= setError('u-lastname',  'err-lastname',  !val('u-lastname'));
+
+  const email = val('u-email');
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  valid &= setError('u-email', 'err-email', !emailOk);
+
+  valid &= setError('u-role',  'err-role',  !val('u-role'));
+  valid &= setError('u-org',   'err-org',   !val('u-org'));
+  valid &= setError('u-type',  'err-type',  !val('u-type'));
+  valid &= setError('u-team',  'err-team',  !val('u-team'));
+  valid &= setError('u-stack', 'err-stack', !val('u-stack'));
+
+  if(!valid){
+    // Scroll to first error
+    document.querySelector('.invalid').scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
+
+  // Save Form 1 data
+  formData.profile = {
+    first_name:    val('u-firstname'),
+    last_name:     val('u-lastname'),
+    full_name:     val('u-firstname') + ' ' + val('u-lastname'),
+    email:         val('u-email'),
+    role:          val('u-role'),
+    organisation:  val('u-org'),
+    client_type:   val('u-type'),
+    team_size:     val('u-team'),
+    tech_stack:    val('u-stack'),
+  };
+
+  // Move to step 2
+  goToStep(2);
+}
+
+// ─────────────────────────────────────────
+// FORM 2 — VALIDATE & SUBMIT
+// ─────────────────────────────────────────
+function submitForm2(){
+  let valid = true;
+
+  valid &= setError('p-name',     'err-pname',    !val('p-name'));
+  valid &= setError('p-type',     'err-ptype',    !val('p-type'));
+  valid &= setError('p-version',  'err-pversion', !val('p-version'));
+  valid &= setError('p-input',    'err-pinput',   !val('p-input'));
+  valid &= setError('p-output',   'err-poutput',  !val('p-output'));
+  valid &= setError('p-connectivity', 'err-pconnect', !val('p-connectivity'));
+  valid &= setError('p-compat',   'err-pcompat',  !val('p-compat'));
+  valid &= setError('p-price',    'err-pprice',   !val('p-price'));
+  valid &= setError('p-sub',      'err-psub',     !val('p-sub'));
+  valid &= setError('p-features', 'err-pfeatures',!val('p-features'));
+  valid &= setError('p-maintenance','err-pmaint',  !val('p-maintenance'));
+
+  if(!valid){
+    document.querySelector('.invalid').scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
+
+  // Save Form 2 data
+  formData.product = {
+    product_name:         val('p-name'),
+    product_type:         val('p-type'),
+    version:              val('p-version'),
+    input_method:         val('p-input'),
+    output_method:        val('p-output'),
+    connectivity:         val('p-connectivity'),
+    compatible_platforms: val('p-compat'),
+    base_price:           val('p-price'),
+    subscription_model:   val('p-sub'),
+    subscription_details: val('p-sub-detail'),
+    key_features:         val('p-features'),
+    maintenance:          val('p-maintenance'),
+    known_edge_cases:     val('p-edge'),
+  };
+
+  // Build full payload
+  const payload = {
+    submitted_at: new Date().toISOString(),
+    ...formData.profile,
+    ...formData.product
+  };
+
+  // Show data preview
+  showDataPreview(payload);
+
+  // ── Replace with your n8n webhook URL when ready ──
+  const WEBHOOK = 'YOUR_N8N_WEBHOOK_URL_HERE';
+
+  if(WEBHOOK === 'YOUR_N8N_WEBHOOK_URL_HERE'){
+    setTimeout(() => showSuccess(payload), 800);
+    return;
+  }
+
+  fetch(WEBHOOK, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(payload)
+  })
+  .then(() => showSuccess(payload))
+  .catch(() => showSuccess(payload));
+}
+
+// ─────────────────────────────────────────
+// DATA PREVIEW — shows the JSON packet
+// ─────────────────────────────────────────
+function showDataPreview(payload){
+  const preview = document.getElementById('data-preview');
+  const body    = document.getElementById('data-preview-body');
+  body.textContent = JSON.stringify(payload, null, 2);
+  preview.style.display = 'block';
+  setTimeout(() => preview.scrollIntoView({behavior:'smooth', block:'nearest'}), 100);
+}
+
+// ─────────────────────────────────────────
+// SUCCESS SCREEN
+// ─────────────────────────────────────────
+function showSuccess(payload){
+  // Hide forms, show success
+  document.getElementById('panel-2').style.display = 'none';
+  document.getElementById('data-preview').style.display = 'none';
+
+  const screen = document.getElementById('success-screen');
+  screen.style.display = 'block';
+
+  // Summary rows
+  const keys = [
+    ['Name',          payload.full_name],
+    ['Email',         payload.email],
+    ['Organisation',  payload.organisation],
+    ['Role',          payload.role],
+    ['Client type',   payload.client_type],
+    ['Product',       payload.product_name],
+    ['Version',       payload.version],
+    ['Product type',  payload.product_type],
+    ['Price',         payload.base_price],
+    ['Subscription',  payload.subscription_model],
+  ];
+
+  document.getElementById('summary-rows').innerHTML = keys.map(([k,v]) =>
+    `<div class="data-row">
+      <div class="data-key">${k}</div>
+      <div class="data-val">${v || '—'}</div>
+    </div>`
+  ).join('');
+
+  // Mark step 2 done
+  document.getElementById('prog-2').classList.remove('active');
+  document.getElementById('prog-2').classList.add('done');
+  document.getElementById('prog-2').classList.remove('locked');
+
+  screen.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+// ─────────────────────────────────────────
+// NAVIGATION
+// ─────────────────────────────────────────
+function goToStep(n){
+  document.querySelectorAll('.form-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.prog-step').forEach(p => {
+    p.classList.remove('active');
+    p.classList.remove('locked');
+  });
+
+  if(n === 2){
+    document.getElementById('panel-1').classList.remove('active');
+    document.getElementById('panel-2').classList.add('active');
+    document.getElementById('prog-1').classList.add('done');
+    document.getElementById('prog-2').classList.add('active');
+    document.getElementById('prog-2').classList.remove('locked');
+  } else {
+    document.getElementById('panel-1').classList.add('active');
+    document.getElementById('prog-1').classList.add('active');
+    document.getElementById('prog-2').classList.add('locked');
+  }
+
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function goBack(){
+  goToStep(1);
+  document.getElementById('data-preview').style.display = 'none';
+}
+
+function restart(){
+  document.getElementById('success-screen').style.display = 'none';
+  document.getElementById('panel-2').style.display = '';
+  Object.keys(formData).forEach(k => delete formData[k]);
+  document.querySelectorAll('input:not([type=submit]), textarea').forEach(el => {
+    if(!el.dataset.keep) el.value = '';
+  });
+  document.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
+  goToStep(1);
+}
+</script>
+</body>
+</html>
