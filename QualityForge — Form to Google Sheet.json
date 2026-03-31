@@ -1,0 +1,281 @@
+{
+  "name": "QualityForge — Form to Google Sheet",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "qualityforge-registration",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "89c72507-1a69-4c20-a6f1-60064350dea9",
+      "name": "Webhook",
+      "webhookId": "483c8d3e-0621-40fb-8def-8ebbbd3fd28c"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1Q4J9ciIlljhntsAQAaWu569km7l1P6tXXsZ27flpHW8",
+          "mode": "list",
+          "cachedResultName": "QualityForge Registrations",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Q4J9ciIlljhntsAQAaWu569km7l1P6tXXsZ27flpHW8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Q4J9ciIlljhntsAQAaWu569km7l1P6tXXsZ27flpHW8/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Submitted At ": "={{ $json.body.submitted_at }}",
+            " Name": "={{ $json.body.submitted_by }}",
+            "Email ": "={{ $json.body.user_email }}",
+            "Organisation ": "={{ $json.body.organisation }}",
+            "Role ": "={{ $json.body.role }}",
+            "Account Type": "={{ $json.body.user_type }}",
+            "Product Name": "={{ $json.body.product_name }}",
+            "Product Type": "={{ $json.body.product_type }}",
+            "Version": "={{ $json.body.version }}",
+            "Input ": "={{ $json.body.input_method }}",
+            "Output ": "={{ $json.body.output_method }}",
+            "Connectivity ": "={{ $json.body.connectivity }}",
+            "Compatible Platforms": "={{ $json.body.compatibility }}",
+            "Price ": "={{ $json.body.base_price }}",
+            "Subscription ": "={{ $json.body.subscription }}",
+            "Sub Details": "={{ $json.body.sub_details }}",
+            "Key Features": "={{ $json.body.key_features }}",
+            "Maintenance ": "={{ $json.body.maintenance }}",
+            "Edge Cases": "={{ $json.body.edge_cases }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Submitted At ",
+              "displayName": "Submitted At ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": " Name",
+              "displayName": " Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email ",
+              "displayName": "Email ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Organisation ",
+              "displayName": "Organisation ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Role ",
+              "displayName": "Role ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Account Type",
+              "displayName": "Account Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Product Name",
+              "displayName": "Product Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Product Type",
+              "displayName": "Product Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Version",
+              "displayName": "Version",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Input ",
+              "displayName": "Input ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Output ",
+              "displayName": "Output ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Connectivity ",
+              "displayName": "Connectivity ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Compatible Platforms",
+              "displayName": "Compatible Platforms",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Price ",
+              "displayName": "Price ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Subscription ",
+              "displayName": "Subscription ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Sub Details",
+              "displayName": "Sub Details",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Key Features",
+              "displayName": "Key Features",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Maintenance ",
+              "displayName": "Maintenance ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Edge Cases",
+              "displayName": "Edge Cases",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        0
+      ],
+      "id": "9b9dcec4-2585-4004-a7d5-64f821edd01b",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "zYcTYHc7bC7sFdY8",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "5ff467c8-405f-449b-957a-fc6948ec2261",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f7cc6f5a1a76b817396e9597373e090e6bf38cf7045a267c5f8c5b2b3bfce4d2"
+  },
+  "id": "ke9vArUs8biRyx8B",
+  "tags": []
+}
