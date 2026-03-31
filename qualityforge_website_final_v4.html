@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>QualityForge — AI-Powered QA Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
+/* ── RESET ── */
+*{box-sizing:border-box;margin:0;padding:0}
+
+/* ── DESIGN TOKENS — dark theme from mockup ── */
+:root{
+  --bg:#0a0f0d;
+  --bg2:#111816;
+  --bg3:#162019;
+  --teal:#1fc98a;
+  --teal2:#15a572;
+  --teal3:#0d6b4a;
+  --teal-dim:rgba(31,201,138,0.1);
+  --teal-glow:rgba(31,201,138,0.08);
+  --text:#e8f0ec;
+  --text2:#8fa89a;
+  --text3:#4d6358;
+  --border:#1e2f28;
+  --border2:#2a4038;
+  --amber:#f0a832;
+  --red:#e05555;
+  --blue:#4a9eff;
+  --radius:10px;
+  --radius-sm:7px;
+}
+
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:15px}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--teal3);border-radius:2px}
+
+/* ── NAV ── */
+nav{
+  position:sticky;top:0;z-index:200;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 40px;height:60px;
+  background:rgba(10,15,13,0.93);
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(12px);
+}
+.nav-logo{
+  font-family:'DM Mono',monospace;font-size:15px;font-weight:500;
+  color:var(--teal);letter-spacing:0.04em;
+  display:flex;align-items:center;gap:8px;
+}
+.logo-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--teal);box-shadow:0 0 8px var(--teal);
+  animation:pulse 2s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.6;transform:scale(0.8)}}
+.nav-links{display:flex;align-items:center;gap:32px}
+.nav-links a{font-size:13px;color:var(--text2);text-decoration:none;letter-spacing:0.02em;transition:color 0.2s;cursor:pointer}
+.nav-links a:hover{color:var(--text)}
+.nav-cta{display:flex;align-items:center;gap:10px}
+.btn-ghost{
+  font-family:'Outfit',sans-serif;font-size:13px;
+  color:var(--text2);background:none;
+  border:1px solid var(--border2);border-radius:6px;
+  padding:7px 16px;cursor:pointer;transition:all 0.2s;
+}
+.btn-ghost:hover{color:var(--text);border-color:var(--teal3)}
+.btn-primary{
+  font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;
+  color:#000;background:var(--teal);
+  border:none;border-radius:6px;
+  padding:8px 18px;cursor:pointer;transition:all 0.2s;
+}
+.btn-primary:hover{background:var(--teal2);transform:translateY(-1px)}
+#nav-user-info{font-size:11px;color:var(--teal);font-family:'DM Mono',monospace;display:none}
+
+/* ── TAB BAR ── */
+.tab-bar{
+  display:flex;gap:0;
+  border-bottom:1px solid var(--border);
+  padding:0 40px;background:var(--bg2);
+  position:sticky;top:60px;z-index:100;
+}
+.tab{
+  font-size:12px;font-family:'DM Mono',monospace;letter-spacing:0.06em;
+  color:var(--text3);padding:12px 20px;cursor:pointer;
+  border-bottom:2px solid transparent;transition:all 0.2s;
+  text-transform:uppercase;
+}
+.tab.active{color:var(--teal);border-bottom-color:var(--teal)}
+.tab:hover:not(.active){color:var(--text2)}
+
+/* ── PAGE & SECTIONS ── */
+.page{overflow-y:auto;max-height:calc(100vh - 108px)}
+.section{display:none;animation:fadeIn 0.3s ease}
+.section.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ══════════════════════════════
+   HOME SECTION — mockup design
+══════════════════════════════ */
+.hero{padding:80px 40px 60px;position:relative;overflow:hidden}
+.hero-grid-bg{
+  position:absolute;inset:0;
+  background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+  background-size:40px 40px;opacity:0.4;
+}
+.hero-glow{
+  position:absolute;top:-100px;left:50%;transform:translateX(-50%);
+  width:600px;height:300px;
+  background:radial-gradient(ellipse,rgba(31,201,138,0.12) 0%,transparent 70%);
+  pointer-events:none;
+}
+.hero-tag{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:11px;font-family:'DM Mono',monospace;
+  color:var(--teal);letter-spacing:0.1em;text-transform:uppercase;
+  border:1px solid var(--teal3);border-radius:20px;
+  padding:4px 14px;margin-bottom:24px;
+  background:var(--teal-dim);position:relative;
+}
+.hero h1{
+  font-family:'DM Serif Display',serif;
+  font-size:52px;line-height:1.08;letter-spacing:-0.02em;
+  color:var(--text);max-width:600px;
+  position:relative;margin-bottom:20px;
+}
+.hero h1 em{color:var(--teal);font-style:italic}
+.hero-sub{font-size:15px;color:var(--text2);line-height:1.7;max-width:500px;margin-bottom:36px;position:relative}
+.hero-btns{display:flex;gap:12px;position:relative;flex-wrap:wrap}
+.hero-stats{display:flex;gap:40px;margin-top:60px;padding-top:40px;border-top:1px solid var(--border);position:relative;flex-wrap:wrap}
+.stat-num{font-family:'DM Serif Display',serif;font-size:32px;color:var(--teal)}
+.stat-label{font-size:12px;color:var(--text3);margin-top:2px;letter-spacing:0.02em}
+.value-strip{display:flex;gap:0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--bg2);flex-wrap:wrap}
+.value-item{flex:1;min-width:160px;padding:24px 28px;border-right:1px solid var(--border)}
+.value-item:last-child{border-right:none}
+.value-icon{font-size:20px;margin-bottom:10px}
+.value-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px}
+.value-desc{font-size:12px;color:var(--text2);line-height:1.5}
+.how-section{padding:60px 40px}
+.section-eyebrow{font-size:11px;font-family:'DM Mono',monospace;letter-spacing:0.12em;text-transform:uppercase;color:var(--teal);margin-bottom:12px}
+.section-title{font-family:'DM Serif Display',serif;font-size:34px;color:var(--text);margin-bottom:40px}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0}
+.step{padding:28px 24px;border:1px solid var(--border);margin:-1px 0 0 -1px;transition:border-color 0.2s,background 0.2s;cursor:default}
+.step:hover{border-color:var(--teal3);background:var(--bg3)}
+.step-num{font-family:'DM Mono',monospace;font-size:11px;color:var(--teal);letter-spacing:0.1em;margin-bottom:14px}
+.step-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:8px}
+.step-desc{font-size:12px;color:var(--text2);line-height:1.6}
+
+/* ══════════════════════════════
+   PRODUCTS SECTION
+══════════════════════════════ */
+.products-header{padding:40px 40px 24px;border-bottom:1px solid var(--border)}
+.products-header h2{font-family:'DM Serif Display',serif;font-size:28px;color:var(--text)}
+.products-header p{font-size:13px;color:var(--text2);margin-top:6px}
+.filter-row{display:flex;align-items:center;gap:10px;padding:16px 40px;border-bottom:1px solid var(--border);background:var(--bg2);flex-wrap:wrap}
+.filter-chip{font-size:11px;font-family:'DM Mono',monospace;padding:5px 12px;border-radius:20px;border:1px solid var(--border2);color:var(--text2);cursor:pointer;transition:all 0.2s;letter-spacing:0.04em;background:none}
+.filter-chip.active,.filter-chip:hover{background:var(--teal-dim);border-color:var(--teal3);color:var(--teal)}
+.products-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--border);border-bottom:1px solid var(--border)}
+.prod-card{background:var(--bg);padding:28px 32px;transition:background 0.2s;cursor:pointer}
+.prod-card:hover{background:var(--bg3)}
+.prod-card.featured{background:linear-gradient(135deg,var(--bg) 0%,rgba(31,201,138,0.04) 100%);border-left:2px solid var(--teal3)}
+.prod-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px}
+.prod-icon{width:48px;height:48px;border-radius:12px;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--bg2)}
+.prod-badge{font-size:10px;font-family:'DM Mono',monospace;letter-spacing:0.08em;text-transform:uppercase;padding:3px 10px;border-radius:10px}
+.badge-live{background:rgba(31,201,138,0.12);color:var(--teal);border:1px solid var(--teal3)}
+.badge-soon{background:rgba(240,168,50,0.12);color:var(--amber);border:1px solid rgba(240,168,50,0.3)}
+.prod-name{font-size:16px;font-weight:600;color:var(--text);margin-bottom:4px}
+.prod-vendor{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;margin-bottom:10px}
+.prod-desc{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:16px}
+.prod-features{display:flex;flex-wrap:wrap;gap:6px}
+.prod-feat{font-size:10px;padding:3px 9px;border-radius:5px;background:var(--bg2);border:1px solid var(--border2);color:var(--text3);font-family:'DM Mono',monospace}
+.prod-footer{margin-top:20px;padding-top:16px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.prod-price{font-size:13px;color:var(--text2)}
+.prod-price strong{color:var(--text);font-size:15px}
+.prod-cta{font-size:12px;color:var(--teal);font-family:'DM Mono',monospace;text-decoration:none;cursor:pointer;background:none;border:none}
+
+/* ══════════════════════════════
+   REGISTER SECTION
+   Contains the full v4 form system
+   styled to match the dark theme
+══════════════════════════════ */
+
+/* Wrapper — shows different views */
+.reg-view{display:none}
+.reg-view.active{display:block;animation:fadeIn 0.25s ease}
+
+/* ── Account type selector ── */
+.reg-intro{padding:48px 40px 32px;border-bottom:1px solid var(--border);max-width:700px}
+.reg-intro h2{font-family:'DM Serif Display',serif;font-size:28px;color:var(--text);margin-bottom:8px}
+.reg-intro p{font-size:13px;color:var(--text2);line-height:1.6}
+.type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:32px 40px;max-width:700px}
+.type-card{
+  border:1px solid var(--border2);border-radius:var(--radius);
+  padding:24px 16px;text-align:center;cursor:pointer;
+  transition:all 0.18s;background:var(--bg2);
+}
+.type-card:hover{border-color:var(--teal3);background:var(--bg3)}
+.type-card.on{border-color:var(--teal);background:var(--teal-dim);box-shadow:0 0 0 2px rgba(31,201,138,0.15)}
+.type-ico{font-size:26px;margin-bottom:10px}
+.type-name{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px}
+.type-desc{font-size:11px;color:var(--text3);line-height:1.4}
+.type-err{font-size:11px;color:var(--red);display:none;padding:0 40px 8px}
+
+/* ── Form fields — dark themed ── */
+.form-wrap{padding:0 40px 48px;max-width:700px}
+.frule{display:flex;align-items:center;gap:8px;font-size:11px;font-family:'DM Mono',monospace;letter-spacing:0.07em;text-transform:uppercase;color:var(--text3);margin:24px 0 16px}
+.frule::before,.frule::after{content:'';flex:1;height:1px;background:var(--border)}
+.fgroup{margin-bottom:16px}
+.fgroup:last-child{margin-bottom:0}
+.frow2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.flabel{display:block;font-size:11px;font-family:'DM Mono',monospace;letter-spacing:0.08em;text-transform:uppercase;color:var(--text3);margin-bottom:6px}
+.flabel .req{color:var(--red)}
+.flabel .opt{color:var(--text3);font-size:10px;font-family:'Outfit',sans-serif;text-transform:none;letter-spacing:0;margin-left:4px}
+.finput,.fselect,.ftextarea{
+  width:100%;padding:10px 14px;
+  background:var(--bg2);border:1px solid var(--border2);
+  border-radius:var(--radius-sm);
+  color:var(--text);font-family:'Outfit',sans-serif;font-size:14px;
+  outline:none;transition:border-color 0.18s,box-shadow 0.18s;
+  -webkit-appearance:none;appearance:none;
+}
+.finput:focus,.fselect:focus,.ftextarea:focus{border-color:var(--teal3);box-shadow:0 0 0 3px rgba(31,201,138,0.1)}
+.finput::placeholder,.ftextarea::placeholder{color:var(--text3);font-size:13px}
+.fselect{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%234d6358' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 13px center;
+  padding-right:34px;cursor:pointer;
+}
+.ftextarea{resize:vertical;min-height:90px;line-height:1.55}
+.fhint{font-size:11px;color:var(--text3);margin-top:4px}
+.ferr{font-size:11px;color:var(--red);margin-top:4px;display:none}
+.finput.bad,.fselect.bad,.ftextarea.bad{border-color:var(--red)!important;box-shadow:0 0 0 3px rgba(224,85,85,0.1)!important}
+.prefill-tag{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-family:'DM Mono',monospace;background:var(--teal-dim);color:var(--teal);border:1px solid var(--teal3);border-radius:4px;padding:1px 7px;margin-bottom:5px}
+.frow3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+
+/* ── Buttons — dark themed ── */
+.fbtn-primary{
+  font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;
+  padding:11px 28px;border-radius:var(--radius-sm);
+  background:var(--teal);color:#000;border:none;cursor:pointer;
+  transition:all 0.2s;letter-spacing:0.01em;
+}
+.fbtn-primary:hover{background:var(--teal2);transform:translateY(-1px)}
+.fbtn-primary:disabled{background:var(--text3);cursor:not-allowed;transform:none}
+.fbtn-ghost{
+  font-family:'Outfit',sans-serif;font-size:13px;
+  padding:10px 20px;border-radius:var(--radius-sm);
+  background:none;color:var(--text2);
+  border:1px solid var(--border2);cursor:pointer;transition:all 0.18s;
+}
+.fbtn-ghost:hover{border-color:var(--teal3);color:var(--text)}
+.fbtn-link{background:none;border:none;color:var(--teal);font-size:13px;font-family:'Outfit',sans-serif;cursor:pointer;text-decoration:underline;padding:0}
+.fbtn-link:hover{color:var(--teal2)}
+
+/* ── Form card ── */
+.fcard{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:0}
+.fcard-section{padding:22px 28px;border-bottom:1px solid var(--border)}
+.fcard-section:last-child{border-bottom:none}
+.fcard-foot{padding:18px 28px;background:var(--bg3);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.fcard-note{font-size:12px;color:var(--text3);line-height:1.5}
+
+/* ── Login card ── */
+.login-wrap{padding:48px 40px;max-width:500px}
+.login-err-box{display:none;font-size:12px;color:var(--red);background:rgba(224,85,85,0.07);padding:9px 13px;border-radius:var(--radius-sm);border:1px solid rgba(224,85,85,0.2);margin-top:8px}
+
+/* ── Dashboard ── */
+.dash-header{
+  padding:24px 40px;
+  background:var(--bg2);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;
+}
+.dash-name{font-family:'DM Serif Display',serif;font-size:22px;color:var(--text)}
+.dash-meta{font-size:12px;color:var(--text2);margin-top:3px;display:flex;align-items:center;gap:8px}
+.dbadge{display:inline-flex;align-items:center;font-size:10px;font-family:'DM Mono',monospace;padding:2px 9px;border-radius:20px}
+.dbadge-startup{background:rgba(31,201,138,0.12);color:var(--teal);border:1px solid var(--teal3)}
+.dbadge-individual{background:rgba(74,158,255,0.12);color:var(--blue);border:1px solid rgba(74,158,255,0.3)}
+.dbadge-enterprise{background:rgba(240,168,50,0.12);color:var(--amber);border:1px solid rgba(240,168,50,0.3)}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border)}
+.tile{background:var(--bg);padding:28px;transition:background 0.2s}
+.tile:not(.tile-lock):hover{background:var(--bg3)}
+.tile-lock{opacity:0.45}
+.tile-ico{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:14px;border:1px solid var(--border2)}
+.tile-name{font-size:14px;font-weight:600;color:var(--text);margin-bottom:5px}
+.tile-desc{font-size:12px;color:var(--text2);line-height:1.55;margin-bottom:14px}
+.tile-btn{font-size:11px;font-family:'DM Mono',monospace;color:var(--teal);background:none;border:1px solid var(--teal3);border-radius:5px;padding:5px 12px;cursor:pointer;transition:background 0.15s;letter-spacing:0.04em}
+.tile-btn:hover{background:var(--teal-dim)}
+.tile-lock-note{font-size:11px;color:var(--text3);margin-top:7px}
+
+/* ── Product form ── */
+.prod-form-wrap{padding:32px 40px 60px}
+.prod-form-back{font-size:12px;color:var(--text2);background:none;border:1px solid var(--border2);border-radius:5px;padding:6px 14px;cursor:pointer;font-family:'DM Mono',monospace;margin-bottom:20px;transition:all 0.15s;letter-spacing:0.04em}
+.prod-form-back:hover{border-color:var(--teal3);color:var(--teal)}
+.prod-form-title{font-family:'DM Serif Display',serif;font-size:26px;color:var(--text);margin-bottom:4px}
+.prod-form-sub{font-size:13px;color:var(--text2);margin-bottom:24px}
+.submit-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:6px}
+.submit-note{font-size:12px;color:var(--text3)}
+.status-msg{font-size:12px;display:none;margin-top:4px}
+.status-msg.show{display:block}
+.status-ok{color:var(--teal)}
+.status-fail{color:var(--red)}
+
+/* ── Success ── */
+.success-wrap{padding:60px 40px;text-align:center}
+.success-ico{width:64px;height:64px;border-radius:50%;background:var(--teal-dim);border:2px solid var(--teal3);display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 20px;color:var(--teal)}
+.success-title{font-family:'DM Serif Display',serif;font-size:28px;color:var(--text);margin-bottom:8px}
+.success-sub{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:28px;max-width:440px;margin-left:auto;margin-right:auto}
+.sum-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;text-align:left;max-width:480px;margin:0 auto 24px}
+.sum-row{display:flex;gap:10px;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px}
+.sum-row:last-child{border-bottom:none}
+.sum-k{color:var(--text3);min-width:120px;font-family:'DM Mono',monospace;font-size:11px;padding-top:1px}
+.sum-v{color:var(--text);font-weight:500;flex:1;word-break:break-word}
+
+/* ── Footer ── */
+footer{padding:24px 40px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg2);flex-wrap:wrap;gap:12px}
+footer p{font-size:12px;color:var(--text3)}
+.footer-links{display:flex;gap:20px}
+.footer-links a{font-size:11px;color:var(--text3);text-decoration:none;font-family:'DM Mono',monospace;letter-spacing:0.04em}
+.footer-links a:hover{color:var(--teal)}
+
+/* ── Responsive ── */
+@media(max-width:720px){
+  nav{padding:0 16px}
+  .nav-links{display:none}
+  .tab-bar{padding:0 16px}
+  .hero{padding:48px 20px 36px}
+  .hero h1{font-size:34px}
+  .steps,.products-grid,.tiles{grid-template-columns:1fr}
+  .value-strip{flex-direction:column}
+  .type-grid,.frow2,.frow3{grid-template-columns:1fr}
+  .how-section,.products-header,.filter-row,.prod-form-wrap,.reg-intro,.form-wrap,.login-wrap,.dash-header{padding-left:20px;padding-right:20px}
+  .type-grid{padding-left:20px;padding-right:20px}
+  .fcard-section{padding:18px}
+  .fcard-foot{flex-direction:column-reverse;align-items:stretch}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav>
+  <div class="nav-logo">
+    <div class="logo-dot"></div>
+    QualityForge
+  </div>
+  <div class="nav-links">
+    <a onclick="showTab('home')">Home</a>
+    <a onclick="showTab('products')">Solutions</a>
+    <a onclick="goToRegister()">Register</a>
+    <a onclick="alert('Coming soon')">About</a>
+    <a onclick="alert('Coming soon')">Docs</a>
+  </div>
+  <div class="nav-cta">
+    <div id="nav-user-info"></div>
+    <button class="btn-ghost" id="nav-signin-btn" onclick="goToLogin()">Sign in</button>
+    <button class="btn-primary" id="nav-getstarted-btn" onclick="goToRegister()">Get started</button>
+    <button class="btn-ghost" id="nav-signout-btn" style="display:none" onclick="doSignout()">Sign out</button>
+  </div>
+</nav>
+
+<!-- ══ TAB BAR ══ -->
+<div class="tab-bar">
+  <div class="tab active" id="tab-home"     onclick="showTab('home')">Overview</div>
+  <div class="tab"        id="tab-products" onclick="showTab('products')">AI solutions</div>
+  <div class="tab"        id="tab-register" onclick="showTab('register')">Register / Enroll</div>
+</div>
+
+<div class="page" id="main-page">
+
+<!-- ══════════════════════════════════════
+     HOME SECTION
+══════════════════════════════════════ -->
+<div class="section active" id="sec-home">
+
+  <div class="hero">
+    <div class="hero-grid-bg"></div>
+    <div class="hero-glow"></div>
+    <div class="hero-tag">✦ AI-native QA platform</div>
+    <h1>Enterprise QA,<br/><em>automated</em> end to end.</h1>
+    <p class="hero-sub">QualityForge delivers GenAI-powered QA automation for enterprise products — from bug detection to test analytics — so your teams ship faster with confidence.</p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="showTab('products')" style="padding:10px 24px;font-size:14px">Explore solutions →</button>
+      <button class="btn-ghost" onclick="goToRegister()" style="padding:10px 24px;font-size:14px">Register your product</button>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item"><div class="stat-num">98%</div><div class="stat-label">Bug capture rate</div></div>
+      <div class="stat-item"><div class="stat-num">3×</div><div class="stat-label">Faster triage</div></div>
+      <div class="stat-item"><div class="stat-num">1</div><div class="stat-label">Enterprise partner live</div></div>
+      <div class="stat-item"><div class="stat-num">n8n</div><div class="stat-label">Workflow engine</div></div>
+    </div>
+  </div>
+
+  <div class="value-strip">
+    <div class="value-item"><div class="value-icon">🔍</div><div class="value-title">AI log analysis</div><div class="value-desc">Failure logs analyzed and summarized by GenAI in seconds, not hours.</div></div>
+    <div class="value-item"><div class="value-icon">🐛</div><div class="value-title">Auto JIRA bugs</div><div class="value-desc">Steps, evidence, and context filed to JIRA automatically — zero manual effort.</div></div>
+    <div class="value-item"><div class="value-icon">📊</div><div class="value-title">Failure dashboards</div><div class="value-desc">Real-time analytics powered by AWS Lambda, SQS and SNS pipelines.</div></div>
+    <div class="value-item"><div class="value-icon">🔗</div><div class="value-title">n8n orchestration</div><div class="value-desc">All workflows built on n8n — modular, observable, and enterprise-grade.</div></div>
+  </div>
+
+  <div class="how-section">
+    <div class="section-eyebrow">How it works</div>
+    <div class="section-title">From failure to fix — automatically.</div>
+    <div class="steps">
+      <div class="step"><div class="step-num">01 ——</div><div class="step-title">Register your product</div><div class="step-desc">Enterprise clients register their product and get an annual QA automation plan tailored to their tech stack.</div></div>
+      <div class="step"><div class="step-num">02 ——</div><div class="step-title">Connect your test suite</div><div class="step-desc">Plug in your CI pipeline or test runner. QualityForge listens for failures via webhook.</div></div>
+      <div class="step"><div class="step-num">03 ——</div><div class="step-title">AI triages failures</div><div class="step-desc">Logs, screenshots, setup data and root causes are collected and analyzed by GenAI in real time.</div></div>
+      <div class="step"><div class="step-num">04 ——</div><div class="step-title">JIRA bug filed &amp; dashboard updated</div><div class="step-desc">A structured bug is auto-created in JIRA. Analytics dashboards reflect the new failure immediately.</div></div>
+    </div>
+  </div>
+
+</div><!-- /home -->
+
+
+<!-- ══════════════════════════════════════
+     PRODUCTS SECTION
+══════════════════════════════════════ -->
+<div class="section" id="sec-products">
+
+  <div class="products-header">
+    <h2>AI QA solutions</h2>
+    <p>Enterprise products we currently support with full GenAI automation coverage.</p>
+  </div>
+
+  <div class="filter-row">
+    <button class="filter-chip active" onclick="setChip(this)">All products</button>
+    <button class="filter-chip" onclick="setChip(this)">Voice &amp; NLU</button>
+    <button class="filter-chip" onclick="setChip(this)">IoT devices</button>
+    <button class="filter-chip" onclick="setChip(this)">Analytics</button>
+    <button class="filter-chip" onclick="setChip(this)">API testing</button>
+  </div>
+
+  <div class="products-grid">
+    <div class="prod-card featured" onclick="goToRegister()">
+      <div class="prod-top"><div class="prod-icon">🔊</div><span class="prod-badge badge-live">● Live</span></div>
+      <div class="prod-name">Amazon Alexa Echo</div>
+      <div class="prod-vendor">Amazon · Voice AI · NLU · IoT</div>
+      <div class="prod-desc">Full-stack GenAI QA coverage for Alexa Echo devices — NLU accuracy testing, voice response validation, multi-locale regression, and real-time failure analytics across EU and IN markets.</div>
+      <div class="prod-features">
+        <span class="prod-feat">NLU accuracy</span><span class="prod-feat">Voice regression</span><span class="prod-feat">Auto JIRA bugs</span><span class="prod-feat">Failure dashboard</span><span class="prod-feat">AWS Lambda pipeline</span><span class="prod-feat">Multi-locale</span>
+      </div>
+      <div class="prod-footer"><div class="prod-price">From <strong>₹4.8L</strong> / year</div><button class="prod-cta" onclick="goToRegister()">Request access →</button></div>
+    </div>
+
+    <div class="prod-card">
+      <div class="prod-top"><div class="prod-icon">☁️</div><span class="prod-badge badge-soon">Coming soon</span></div>
+      <div class="prod-name">AWS IoT Core</div>
+      <div class="prod-vendor">Amazon Web Services · IoT · Cloud</div>
+      <div class="prod-desc">Automated QA workflows for IoT device fleets on AWS — message routing validation, shadow state testing, and anomaly detection pipelines.</div>
+      <div class="prod-features"><span class="prod-feat">MQTT testing</span><span class="prod-feat">Shadow validation</span><span class="prod-feat">Alert pipelines</span><span class="prod-feat">Fleet dashboards</span></div>
+      <div class="prod-footer"><div class="prod-price">Pricing on request</div><button class="prod-cta">Join waitlist →</button></div>
+    </div>
+
+    <div class="prod-card">
+      <div class="prod-top"><div class="prod-icon">📱</div><span class="prod-badge badge-soon">Coming soon</span></div>
+      <div class="prod-name">Alexa Mobile App</div>
+      <div class="prod-vendor">Amazon · Mobile · Cross-platform</div>
+      <div class="prod-desc">AI-driven mobile test automation for the Alexa companion app — UI regression, API contract testing, and push notification validation across Android and iOS.</div>
+      <div class="prod-features"><span class="prod-feat">UI automation</span><span class="prod-feat">API contract tests</span><span class="prod-feat">Cross-platform</span><span class="prod-feat">CI integration</span></div>
+      <div class="prod-footer"><div class="prod-price">Pricing on request</div><button class="prod-cta">Join waitlist →</button></div>
+    </div>
+
+    <div class="prod-card" style="display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;border:1px dashed var(--border2)" onclick="goToRegister()">
+      <div style="font-size:32px;margin-bottom:14px;opacity:0.4">+</div>
+      <div style="font-size:14px;font-weight:600;color:var(--text2);margin-bottom:8px">Register your product</div>
+      <div style="font-size:12px;color:var(--text3);max-width:220px;line-height:1.6;margin-bottom:20px">Are you an enterprise or startup? List your product and get AI QA automation coverage.</div>
+      <button class="btn-ghost" style="font-size:12px">Talk to us →</button>
+    </div>
+  </div>
+
+</div><!-- /products -->
+
+
+<!-- ══════════════════════════════════════
+     REGISTER SECTION
+     All views live here, toggled by JS
+══════════════════════════════════════ -->
+<div class="section" id="sec-register">
+
+  <!-- VIEW: Account type picker + registration form -->
+  <div class="reg-view active" id="rv-register">
+    <div class="reg-intro">
+      <h2>Create your account</h2>
+      <p>Select your account type first. This determines what you can access on the platform. Already registered? <button class="fbtn-link" onclick="switchRegView('rv-login')">Sign in instead</button></p>
+    </div>
+
+    <div class="type-grid">
+      <div class="type-card" id="tc-startup" onclick="pickType('startup')">
+        <div class="type-ico">🚀</div>
+        <div class="type-name">Startup</div>
+        <div class="type-desc">Access existing QA solutions on the platform</div>
+      </div>
+      <div class="type-card" id="tc-individual" onclick="pickType('individual')">
+        <div class="type-ico">👤</div>
+        <div class="type-name">Individual</div>
+        <div class="type-desc">Solo developer or freelancer exploring QA</div>
+      </div>
+      <div class="type-card" id="tc-enterprise" onclick="pickType('enterprise')">
+        <div class="type-ico">🏢</div>
+        <div class="type-name">Enterprise</div>
+        <div class="type-desc">Register your own product for full QA coverage</div>
+      </div>
+    </div>
+    <div class="type-err" id="type-err">Please select an account type to continue</div>
+
+    <div class="form-wrap" id="reg-fields" style="display:none">
+      <div class="frule">Your details</div>
+      <div class="fgroup frow2">
+        <div>
+          <label class="flabel">First name <span class="req">*</span></label>
+          <input class="finput" id="r-fn" type="text" placeholder="First name"/>
+          <div class="ferr" id="e-fn">Required</div>
+        </div>
+        <div>
+          <label class="flabel">Last name <span class="req">*</span></label>
+          <input class="finput" id="r-ln" type="text" placeholder="Last name"/>
+          <div class="ferr" id="e-ln">Required</div>
+        </div>
+      </div>
+      <div class="fgroup">
+        <label class="flabel">Email <span class="req">*</span></label>
+        <input class="finput" id="r-email" type="email" placeholder="you@company.com"/>
+        <div class="ferr" id="e-email">Enter a valid email address</div>
+      </div>
+      <div class="fgroup">
+        <label class="flabel">Your role <span class="req">*</span></label>
+        <input class="finput" id="r-role" type="text" placeholder="e.g. QA Lead, Developer, CTO"/>
+        <div class="ferr" id="e-role">Required</div>
+      </div>
+      <div id="org-fields" style="display:none">
+        <div class="frule">Organisation</div>
+        <div class="fgroup">
+          <label class="flabel">Organisation name <span class="req">*</span></label>
+          <input class="finput" id="r-org" type="text" placeholder="e.g. Amazon India Pvt. Ltd."/>
+          <div class="ferr" id="e-org">Required</div>
+        </div>
+        <div class="fgroup">
+          <label class="flabel">Technology stack <span class="req">*</span></label>
+          <input class="finput" id="r-stack" type="text" placeholder="e.g. AWS, Python, JIRA, n8n"/>
+          <div class="fhint">Tools your team uses — comma separated</div>
+          <div class="ferr" id="e-stack">Required</div>
+        </div>
+      </div>
+      <div class="frule">Set password</div>
+      <div class="fgroup">
+        <label class="flabel">Password <span class="req">*</span></label>
+        <input class="finput" id="r-pwd" type="password" placeholder="Minimum 8 characters"/>
+        <div class="fhint">You will use this to sign back in</div>
+        <div class="ferr" id="e-pwd">Must be at least 8 characters</div>
+      </div>
+      <div style="margin-top:20px">
+        <button class="fbtn-primary" onclick="doRegister()">Create account →</button>
+      </div>
+    </div>
+  </div><!-- /rv-register -->
+
+  <!-- VIEW: Login -->
+  <div class="reg-view" id="rv-login">
+    <div class="login-wrap">
+      <div class="reg-intro" style="padding:0 0 28px">
+        <h2>Sign in</h2>
+        <p>Enter your email and password to access your dashboard. New here? <button class="fbtn-link" onclick="switchRegView('rv-register')">Create an account</button></p>
+      </div>
+      <div class="fgroup">
+        <label class="flabel">Email <span class="req">*</span></label>
+        <input class="finput" id="l-email" type="email" placeholder="you@company.com"/>
+        <div class="ferr" id="e-lemail">Enter your email</div>
+      </div>
+      <div class="fgroup">
+        <label class="flabel">Password <span class="req">*</span></label>
+        <input class="finput" id="l-pwd" type="password" placeholder="Your password"/>
+        <div class="ferr" id="e-lpwd">Enter your password</div>
+      </div>
+      <div class="login-err-box" id="login-err">Email or password not recognised. Please try again.</div>
+      <div style="margin-top:20px">
+        <button class="fbtn-primary" onclick="doLogin()">Sign in →</button>
+      </div>
+    </div>
+  </div><!-- /rv-login -->
+
+  <!-- VIEW: Dashboard -->
+  <div class="reg-view" id="rv-dashboard">
+    <div class="dash-header">
+      <div>
+        <div class="dash-name" id="d-name">Welcome</div>
+        <div class="dash-meta" id="d-meta"></div>
+      </div>
+      <button class="fbtn-ghost" onclick="doSignout()">Sign out</button>
+    </div>
+    <div class="tiles" id="d-tiles"></div>
+  </div><!-- /rv-dashboard -->
+
+  <!-- VIEW: Product form -->
+  <div class="reg-view" id="rv-product">
+    <div class="prod-form-wrap">
+      <button class="prod-form-back" onclick="switchRegView('rv-dashboard')">← Back to dashboard</button>
+      <div class="prod-form-title">Register your product</div>
+      <div class="prod-form-sub">Echo Dot fields are pre-filled — review and confirm before submitting.</div>
+
+      <div class="fcard">
+        <div class="fcard-section">
+          <div class="frule" style="margin-top:0">Basic information</div>
+          <div class="fgroup">
+            <div class="prefill-tag">⚡ Pre-filled for Echo Dot</div>
+            <label class="flabel">Product name <span class="req">*</span></label>
+            <input class="finput" id="p-name" type="text" value="Amazon Echo Dot (5th Generation)"/>
+            <div class="ferr" id="ep-name">Required</div>
+          </div>
+          <div class="fgroup frow2">
+            <div>
+              <div class="prefill-tag">⚡ Pre-filled</div>
+              <label class="flabel">Product type <span class="req">*</span></label>
+              <select class="fselect" id="p-type">
+                <option value="smart-speaker">Smart Speaker</option>
+                <option value="mobile-app">Mobile App</option>
+                <option value="web-app">Web Application</option>
+                <option value="iot">IoT Device</option>
+                <option value="api">API / Service</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div>
+              <label class="flabel">Version <span class="req">*</span></label>
+              <input class="finput" id="p-version" type="text" value="5th Generation (2023)"/>
+              <div class="ferr" id="ep-version">Required</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="fcard-section">
+          <div class="frule" style="margin-top:0">How the product works</div>
+          <div class="fgroup frow3">
+            <div>
+              <div class="prefill-tag">⚡ Pre-filled</div>
+              <label class="flabel">Input <span class="req">*</span></label>
+              <select class="fselect" id="p-input"><option value="voice">Voice</option><option value="touch">Touch</option><option value="keyboard">Keyboard</option><option value="api">API</option><option value="sensor">Sensor</option></select>
+            </div>
+            <div>
+              <div class="prefill-tag">⚡ Pre-filled</div>
+              <label class="flabel">Output <span class="req">*</span></label>
+              <select class="fselect" id="p-output"><option value="audio">Audio</option><option value="visual">Screen</option><option value="notification">Notification</option><option value="api">API response</option></select>
+            </div>
+            <div>
+              <label class="flabel">Connectivity <span class="req">*</span></label>
+              <input class="finput" id="p-conn" type="text" value="WiFi 802.11ac, Bluetooth 5.0"/>
+              <div class="ferr" id="ep-conn">Required</div>
+            </div>
+          </div>
+          <div class="fgroup">
+            <label class="flabel">Compatible platforms <span class="req">*</span></label>
+            <input class="finput" id="p-compat" type="text" value="Alexa, Zigbee hub, iOS, Android, AWS IoT"/>
+            <div class="ferr" id="ep-compat">Required</div>
+          </div>
+        </div>
+
+        <div class="fcard-section">
+          <div class="frule" style="margin-top:0">Pricing &amp; subscription</div>
+          <div class="fgroup frow2">
+            <div>
+              <label class="flabel">Base price <span class="req">*</span></label>
+              <input class="finput" id="p-price" type="text" value="Rs 4499 / $54.99 (one-time)"/>
+              <div class="ferr" id="ep-price">Required</div>
+            </div>
+            <div>
+              <label class="flabel">Subscription <span class="req">*</span></label>
+              <select class="fselect" id="p-sub"><option value="none">No subscription</option><option value="optional" selected>Optional subscription</option><option value="required">Required subscription</option></select>
+            </div>
+          </div>
+          <div class="fgroup">
+            <label class="flabel">Subscription details <span class="opt">(optional)</span></label>
+            <input class="finput" id="p-subdetail" type="text" value="Amazon Music Rs 999/mo, Amazon Prime Rs 1499/mo"/>
+          </div>
+        </div>
+
+        <div class="fcard-section">
+          <div class="frule" style="margin-top:0">Features &amp; testing context</div>
+          <div class="fgroup">
+            <label class="flabel">Key features <span class="req">*</span></label>
+            <textarea class="ftextarea" id="p-features" rows="6">Voice calls and messaging via Alexa
+Smart home control (Zigbee hub built-in)
+Music and podcast streaming
+Alarm, timer and reminder setting
+Temperature sensor with ambient display
+Drop-in and announcement calls
+Multi-room audio sync
+Routines and automation</textarea>
+            <div class="fhint">One feature per line — AI uses this to write test cases</div>
+            <div class="ferr" id="ep-features">Please list at least one feature</div>
+          </div>
+          <div class="fgroup">
+            <label class="flabel">Warranty &amp; maintenance <span class="req">*</span></label>
+            <input class="finput" id="p-maint" type="text" value="1-year warranty, OTA updates, no physical maintenance"/>
+            <div class="ferr" id="ep-maint">Required</div>
+          </div>
+          <div class="fgroup">
+            <label class="flabel">Known issues / edge cases <span class="opt">(optional)</span></label>
+            <textarea class="ftextarea" id="p-edge" rows="3" placeholder="e.g. Voice recognition struggles in noisy environments"></textarea>
+            <div class="fhint">Helps AI generate better edge case tests</div>
+          </div>
+        </div>
+
+        <div class="fcard-section">
+          <div class="submit-row">
+            <div class="submit-note">Submitting notifies the QualityForge team automatically</div>
+            <button class="fbtn-primary" id="submit-btn" onclick="doProduct()">Submit product →</button>
+          </div>
+          <div class="status-msg" id="status-msg"></div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /rv-product -->
+
+  <!-- VIEW: Success -->
+  <div class="reg-view" id="rv-success">
+    <div class="success-wrap">
+      <div class="success-ico">✓</div>
+      <div class="success-title">Product registered!</div>
+      <p class="success-sub">Your details have been submitted and the QualityForge team has been notified. They will be in touch within 2 business days.</p>
+      <div class="sum-box"><div id="sum-rows"></div></div>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <button class="fbtn-primary" onclick="registerAnotherProduct()">Register another product →</button>
+        <button class="fbtn-ghost" onclick="switchRegView('rv-dashboard')">Back to dashboard</button>
+      </div>
+    </div>
+  </div><!-- /rv-success -->
+
+</div><!-- /register -->
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2025 QualityForge · AI QA Solutions · Mumbai, India</p>
+  <div class="footer-links">
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+    <a href="#">Docs</a>
+    <a href="#">Contact</a>
+  </div>
+</footer>
+
+</div><!-- /page -->
+
+<script>
+(function() {
+
+  // ── EmailJS ──
+  emailjs.init('c7HK8_MIuKoss8k3c');
+  var EJ_SERVICE  = 'service_o27x8te';
+  var EJ_TEMPLATE = 'template_aiuzdvl';
+  var NOTIFY_TO   = 'quantumtester111@gmail.com';
+
+  // ── Blocked personal email domains ──
+  var BLOCKED = ['gmail.com','yahoo.com','yahoo.co.in','hotmail.com','outlook.com','live.com','icloud.com','me.com','aol.com','protonmail.com','rediffmail.com','ymail.com'];
+  function isPersonal(email) {
+    var d = email.split('@')[1];
+    return d ? BLOCKED.indexOf(d.toLowerCase()) !== -1 : false;
+  }
+
+  // ── App state ──
+  var user     = null;
+  var userType = null;
+  var users    = {};
+
+  // ── Helpers ──
+  function g(id) { return document.getElementById(id); }
+  function v(id) { var el = g(id); return (el && el.value) ? el.value.trim() : ''; }
+  function markBad(fid, eid, isBad) {
+    var f = g(fid), e = g(eid);
+    if (!f || !e) return !isBad;
+    if (isBad) { f.classList.add('bad'); e.style.display = 'block'; }
+    else       { f.classList.remove('bad'); e.style.display = 'none'; }
+    return !isBad;
+  }
+
+  // Clear errors on input
+  document.querySelectorAll('.finput,.fselect,.ftextarea').forEach(function(el) {
+    el.addEventListener('input', function() {
+      el.classList.remove('bad');
+      var n = el.nextElementSibling;
+      if (n && n.classList.contains('ferr')) n.style.display = 'none';
+    });
+  });
+
+  // ── Tab navigation (public pages) ──
+  window.showTab = function(name) {
+    document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
+    document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+    g('sec-'+name).classList.add('active');
+    g('tab-'+name).classList.add('active');
+    g('main-page').scrollTop = 0;
+  };
+
+  // ── Register tab helpers ──
+  window.goToRegister = function() {
+    showTab('register');
+    if (user) {
+      switchRegView('rv-dashboard');
+    } else {
+      switchRegView('rv-register');
+    }
+  };
+
+  window.goToLogin = function() {
+    showTab('register');
+    switchRegView('rv-login');
+  };
+
+  function switchRegView(id) {
+    document.querySelectorAll('.reg-view').forEach(function(v) { v.classList.remove('active'); });
+    g(id).classList.add('active');
+    g('main-page').scrollTop = 0;
+  }
+  window.switchRegView = switchRegView;
+
+  // ── Filter chips ──
+  window.setChip = function(el) {
+    document.querySelectorAll('.filter-chip').forEach(function(c) { c.classList.remove('active'); });
+    el.classList.add('active');
+  };
+
+  // ── Account type selection ──
+  window.pickType = function(type) {
+    userType = type;
+    ['startup','individual','enterprise'].forEach(function(t) { g('tc-'+t).classList.remove('on'); });
+    g('tc-'+type).classList.add('on');
+    g('type-err').style.display = 'none';
+    g('reg-fields').style.display = 'block';
+    g('org-fields').style.display = (type === 'startup' || type === 'enterprise') ? 'block' : 'none';
+  };
+
+  // ── Register ──
+  window.doRegister = function() {
+    var ok = true;
+    if (!userType) { g('type-err').style.display = 'block'; ok = false; }
+    ok &= markBad('r-fn',  'e-fn',  !v('r-fn'));
+    ok &= markBad('r-ln',  'e-ln',  !v('r-ln'));
+    var email    = v('r-email');
+    var validFmt = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    ok &= markBad('r-email', 'e-email', !validFmt);
+    if (validFmt && (userType === 'enterprise' || userType === 'startup') && isPersonal(email)) {
+      g('r-email').classList.add('bad');
+      g('e-email').textContent = 'Please use a company email. Personal emails (Gmail, Yahoo etc.) are not accepted for ' + userType + ' accounts.';
+      g('e-email').style.display = 'block';
+      ok = false;
+    }
+    ok &= markBad('r-role', 'e-role', !v('r-role'));
+    if (userType === 'startup' || userType === 'enterprise') {
+      ok &= markBad('r-org',   'e-org',   !v('r-org'));
+      ok &= markBad('r-stack', 'e-stack', !v('r-stack'));
+    }
+    ok &= markBad('r-pwd', 'e-pwd', v('r-pwd').length < 8);
+    if (!ok) {
+      var first = document.querySelector('.bad');
+      if (first) first.scrollIntoView({ behavior:'smooth', block:'center' });
+      return;
+    }
+    user = {
+      first: v('r-fn'),
+      name:  v('r-fn') + ' ' + v('r-ln'),
+      email: email,
+      role:  v('r-role'),
+      type:  userType,
+      org:   v('r-org') || '',
+      stack: v('r-stack') || ''
+    };
+    users[email] = { data: user, pwd: v('r-pwd') };
+    openDashboard();
+  };
+
+  // ── Login ──
+  window.doLogin = function() {
+    var ok = true;
+    ok &= markBad('l-email', 'e-lemail', !v('l-email'));
+    ok &= markBad('l-pwd',   'e-lpwd',   !v('l-pwd'));
+    if (!ok) return;
+    g('login-err').style.display = 'none';
+    var email = v('l-email');
+    if (users[email] && users[email].pwd === v('l-pwd')) {
+      user = users[email].data;
+    } else {
+      user = { first:'Demo', name:'Demo User', email:email, type:'enterprise', org:'Demo Organisation', role:'QA Lead' };
+    }
+    openDashboard();
+  };
+
+  // ── Open dashboard ──
+  function openDashboard() {
+    // Update nav
+    g('nav-user-info').textContent = user.email;
+    g('nav-user-info').style.display = 'block';
+    g('nav-signin-btn').style.display   = 'none';
+    g('nav-getstarted-btn').style.display = 'none';
+    g('nav-signout-btn').style.display  = 'block';
+
+    // Dashboard header
+    g('d-name').textContent = 'Welcome, ' + user.first;
+    var meta = user.org ? user.org + ' &nbsp;·&nbsp; ' : '';
+    var bc = { startup:'dbadge-startup', individual:'dbadge-individual', enterprise:'dbadge-enterprise' }[user.type] || 'dbadge-startup';
+    var bl = { startup:'Startup', individual:'Individual', enterprise:'Enterprise' }[user.type] || user.type;
+    g('d-meta').innerHTML = meta + '<span class="dbadge ' + bc + '">' + bl + '</span>';
+
+    buildTiles(user.type);
+    showTab('register');
+    switchRegView('rv-dashboard');
+  }
+
+  // ── Build tiles ──
+  function buildTiles(type) {
+    var defs = {
+      enterprise: [
+        { ico:'📦', bg:'rgba(31,201,138,0.1)', name:'Register a product',  desc:'Add your product and configure AI-powered QA automation coverage.',     btn:'Register now',     act:'product',  lock:false },
+        { ico:'🔍', bg:'rgba(74,158,255,0.1)', name:'View QA solutions',   desc:'Browse existing AI QA workflows and analytics pipelines.',              btn:'Browse solutions', act:'soon',     lock:false },
+        { ico:'📊', bg:'rgba(240,168,50,0.1)', name:'Analytics dashboard', desc:'View failure trends, root cause reports, and AI-generated QA insights.', btn:'View dashboard',   act:'soon',     lock:false }
+      ],
+      startup: [
+        { ico:'🔍', bg:'rgba(31,201,138,0.1)', name:'Browse QA solutions',  desc:'Access enterprise QA workflows available on your plan.',               btn:'Browse solutions', act:'soon',    lock:false },
+        { ico:'📊', bg:'rgba(74,158,255,0.1)', name:'Analytics dashboard',  desc:'View basic failure analytics for your subscribed solutions.',          btn:'View dashboard',   act:'soon',    lock:false },
+        { ico:'📦', bg:'rgba(255,255,255,0.04)',name:'Register a product',  desc:'Product registration is available on Professional and Enterprise plans.', btn:'Upgrade plan',   act:'upgrade', lock:true  }
+      ],
+      individual: [
+        { ico:'🔍', bg:'rgba(31,201,138,0.1)', name:'Browse QA solutions',  desc:'Explore the platform and discover AI QA automation.',                  btn:'Browse solutions', act:'soon',    lock:false },
+        { ico:'📦', bg:'rgba(255,255,255,0.04)',name:'Register a product',  desc:'Available on Startup and Enterprise plans.',                            btn:'Upgrade plan',    act:'upgrade', lock:true  },
+        { ico:'📊', bg:'rgba(255,255,255,0.04)',name:'Analytics dashboard', desc:'Advanced analytics available on paid plans.',                           btn:'Upgrade plan',    act:'upgrade', lock:true  }
+      ]
+    };
+    var list = defs[type] || defs.startup;
+    var html = '';
+    list.forEach(function(t, i) {
+      html += '<div class="tile' + (t.lock ? ' tile-lock' : '') + '">';
+      html += '<div class="tile-ico" style="background:' + t.bg + ';border-color:var(--border2)">' + t.ico + '</div>';
+      html += '<div class="tile-name">' + t.name + '</div>';
+      html += '<div class="tile-desc">' + t.desc + '</div>';
+      html += '<button class="tile-btn" data-i="' + i + '">' + t.btn + '</button>';
+      if (t.lock) html += '<div class="tile-lock-note">🔒 Upgrade required</div>';
+      html += '</div>';
+    });
+    g('d-tiles').innerHTML = html;
+    g('d-tiles').querySelectorAll('.tile-btn').forEach(function(btn) {
+      var tile = list[parseInt(btn.getAttribute('data-i'))];
+      btn.addEventListener('click', function() {
+        if (tile.lock) { alert('Upgrade your plan to access this feature'); return; }
+        if (tile.act === 'product') switchRegView('rv-product');
+        else alert('Coming soon — this section is under development');
+      });
+    });
+  }
+
+  // ── Product form submit ──
+  window.doProduct = function() {
+    var ok = true;
+    ok &= markBad('p-name',     'ep-name',     !v('p-name'));
+    ok &= markBad('p-version',  'ep-version',  !v('p-version'));
+    ok &= markBad('p-conn',     'ep-conn',     !v('p-conn'));
+    ok &= markBad('p-compat',   'ep-compat',   !v('p-compat'));
+    ok &= markBad('p-price',    'ep-price',    !v('p-price'));
+    ok &= markBad('p-features', 'ep-features', !v('p-features'));
+    ok &= markBad('p-maint',    'ep-maint',    !v('p-maint'));
+    if (!ok) {
+      var f = document.querySelector('.bad');
+      if (f) f.scrollIntoView({ behavior:'smooth', block:'center' });
+      return;
+    }
+
+    var payload = {
+      submitted_at:  new Date().toISOString(),
+      submitted_by:  user ? user.name  : 'Unknown',
+      user_email:    user ? user.email : 'Unknown',
+      user_type:     user ? user.type  : 'Unknown',
+      organisation:  user ? user.org   : 'Unknown',
+      role:          user ? user.role  : 'Unknown',
+      product_name:  v('p-name'),
+      product_type:  v('p-type'),
+      version:       v('p-version'),
+      input_method:  v('p-input'),
+      output_method: v('p-output'),
+      connectivity:  v('p-conn'),
+      compatibility: v('p-compat'),
+      base_price:    v('p-price'),
+      subscription:  v('p-sub'),
+      sub_details:   v('p-subdetail'),
+      key_features:  v('p-features'),
+      maintenance:   v('p-maint'),
+      edge_cases:    v('p-edge')
+    };
+
+    var btn = g('submit-btn');
+    var msg = g('status-msg');
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
+    msg.className = 'status-msg show';
+    msg.textContent = 'Notifying the QualityForge team...';
+
+    var body = [
+      'NEW PRODUCT REGISTRATION — QUALITYFORGE',
+      '=========================================',
+      '',
+      'CLIENT',
+      'Name:         ' + payload.submitted_by,
+      'Email:        ' + payload.user_email,
+      'Organisation: ' + payload.organisation,
+      'Role:         ' + payload.role,
+      'Account type: ' + payload.user_type,
+      '',
+      'PRODUCT',
+      'Name:         ' + payload.product_name,
+      'Type:         ' + payload.product_type,
+      'Version:      ' + payload.version,
+      'Input:        ' + payload.input_method,
+      'Output:       ' + payload.output_method,
+      'Connectivity: ' + payload.connectivity,
+      'Compatible:   ' + payload.compatibility,
+      'Price:        ' + payload.base_price,
+      'Subscription: ' + payload.subscription,
+      'Sub details:  ' + (payload.sub_details || 'N/A'),
+      '',
+      'KEY FEATURES',
+      payload.key_features,
+      '',
+      'MAINTENANCE',
+      payload.maintenance,
+      '',
+      'EDGE CASES',
+      payload.edge_cases || 'None provided',
+      '',
+      'JSON DATA (for backend workflows)',
+      '===================================',
+      JSON.stringify(payload, null, 2)
+    ].join('\n');
+
+    emailjs.send(EJ_SERVICE, EJ_TEMPLATE, {
+      company:  payload.organisation + ' — ' + payload.product_name,
+      message:  body,
+      to_email: NOTIFY_TO
+    })
+    .then(function() {
+      msg.className = 'status-msg show status-ok';
+      msg.textContent = '✓ QualityForge team notified successfully';
+      btn.textContent = 'Submitted ✓';
+      sendToWebhook(payload);
+      setTimeout(function() {
+        // Re-enable button for next registration
+        btn.disabled = false;
+        btn.textContent = 'Submit product →';
+        showSuccess(payload);
+      }, 700);
+    })
+    .catch(function(err) {
+      console.error('EmailJS:', err);
+      msg.className = 'status-msg show status-fail';
+      msg.textContent = 'Email notification failed — data still captured. Check EmailJS settings.';
+      btn.disabled = false;
+      btn.textContent = 'Submit product →';
+      setTimeout(function() { showSuccess(payload); }, 1500);
+    });
+  };
+
+  // ── Send to n8n webhook → Google Sheet ──
+  // NOTE: This is the test URL. Once your n8n workflow is active,
+  // change /webhook-test/ to /webhook/ in the URL below.
+  function sendToWebhook(payload) {
+    var WEBHOOK_URL = 'https://aishwaryabhagat.app.n8n.cloud/webhook/qualityforge-registration';
+    fetch(WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+    .then(function() { console.log('n8n webhook: data sent successfully'); })
+    .catch(function(err) { console.error('n8n webhook error:', err); });
+  }
+
+  // ── Register another product ──
+  // Resets the product form completely and goes back to it
+  window.registerAnotherProduct = function() {
+    // Reset all product form fields to their default values
+    var g = window.g || function(id){ return document.getElementById(id); };
+    var fields = ['p-name','p-version','p-conn','p-compat','p-price','p-subdetail','p-maint','p-edge'];
+    fields.forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    // Reset selects to first option
+    ['p-type','p-input','p-output','p-sub'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.selectedIndex = 0;
+    });
+    // Reset features textarea
+    var feat = document.getElementById('p-features');
+    if (feat) feat.value = '';
+    // Clear any error states
+    document.querySelectorAll('.finput.bad,.fselect.bad,.ftextarea.bad').forEach(function(el) {
+      el.classList.remove('bad');
+    });
+    document.querySelectorAll('.ferr').forEach(function(el) {
+      el.style.display = 'none';
+    });
+    // Re-enable the submit button
+    var btn = document.getElementById('submit-btn');
+    if (btn) { btn.disabled = false; btn.textContent = 'Submit product →'; }
+    var msg = document.getElementById('status-msg');
+    if (msg) { msg.className = 'status-msg'; msg.textContent = ''; }
+    switchRegView('rv-product');
+  };
+
+  // ── Success ──
+  function showSuccess(p) {
+    var rows = [['Submitted by',p.submitted_by],['Organisation',p.organisation],['Product',p.product_name],['Version',p.version],['Type',p.product_type],['Price',p.base_price],['Subscription',p.subscription]];
+    g('sum-rows').innerHTML = rows.map(function(r) {
+      return '<div class="sum-row"><div class="sum-k">'+r[0]+'</div><div class="sum-v">'+(r[1]||'--')+'</div></div>';
+    }).join('');
+    switchRegView('rv-success');
+  }
+
+  // ── Sign out ──
+  window.doSignout = function() {
+    user = null; userType = null;
+    g('nav-user-info').style.display    = 'none';
+    g('nav-signin-btn').style.display   = 'block';
+    g('nav-getstarted-btn').style.display = 'block';
+    g('nav-signout-btn').style.display  = 'none';
+    ['r-fn','r-ln','r-email','r-role','r-org','r-stack'].forEach(function(id) { var el = g(id); if (el) el.value = ''; });
+    g('r-pwd').value = '';
+    ['startup','individual','enterprise'].forEach(function(t) { g('tc-'+t).classList.remove('on'); });
+    g('reg-fields').style.display = 'none';
+    g('org-fields').style.display = 'none';
+    var btn = g('submit-btn');
+    if (btn) { btn.disabled = false; btn.textContent = 'Submit product →'; }
+    var msg = g('status-msg');
+    if (msg) { msg.className = 'status-msg'; msg.textContent = ''; }
+    showTab('home');
+  };
+
+})();
+</script>
+</body>
+</html>
